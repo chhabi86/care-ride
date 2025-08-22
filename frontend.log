@@ -1,0 +1,44 @@
+Workspace extension with invalid name (defaultProject) found.
+Option "browserTarget" is deprecated: Use 'buildTarget' instead.
+****************************************************************************************
+This is a simple server for use in testing or debugging Angular applications locally.
+It hasn't been reviewed for security issues.
+
+DON'T USE IT FOR PRODUCTION!
+****************************************************************************************
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+
+Initial chunk files   | Names         |  Raw size | Estimated transfer size
+main.js               | main          | 244.16 kB |                68.24 kB
+polyfills.js          | polyfills     | 105.40 kB |                32.13 kB
+styles.css, styles.js | styles        |  71.60 kB |                21.56 kB
+runtime.js            | runtime       |   1.24 kB |               676 bytes
+
+                      | Initial total | 422.41 kB |               122.59 kB
+
+Build at: 2025-08-22T11:58:17.503Z - Hash: 7a9554603987c2df - Time: 4189ms
+
+** Angular Live Development Server is listening on 127.0.0.1:4201, open your browser on http://127.0.0.1:4201/ **
+
+
+✔ Compiled successfully.
+✔ Browser application bundle generation complete.
+
+
+
+4 unchanged chunks
+
+Build at: 2025-08-22T11:58:17.946Z - Hash: 7a9554603987c2df - Time: 393ms
+
+✔ Compiled successfully.
+(node:23646) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+<e> [webpack-dev-server] [HPM] Error occurred while proxying request 127.0.0.1:4201/api/services to http://localhost:8080/ [ECONNREFUSED] (https://nodejs.org/api/errors.html#errors_common_system_errors)
+<e> [webpack-dev-server] [HPM] Error occurred while proxying request 127.0.0.1:4201/api/bookings to http://localhost:8080/ [ECONNREFUSED] (https://nodejs.org/api/errors.html#errors_common_system_errors)
+<e> [webpack-dev-server] [HPM] Error occurred while proxying request 127.0.0.1:4201/api/services to http://localhost:8080/ [ECONNREFUSED] (https://nodejs.org/api/errors.html#errors_common_system_errors)
+<e> [webpack-dev-server] [HPM] Error occurred while proxying request 127.0.0.1:4201/api/bookings to http://localhost:8080/ [ECONNREFUSED] (https://nodejs.org/api/errors.html#errors_common_system_errors)
+<e> [webpack-dev-server] [HPM] Error occurred while proxying request 127.0.0.1:4201/api/services to http://localhost:8080/ [ECONNREFUSED] (https://nodejs.org/api/errors.html#errors_common_system_errors)
+<e> [webpack-dev-server] [HPM] Error occurred while proxying request 127.0.0.1:4201/api/bookings to http://localhost:8080/ [ECONNREFUSED] (https://nodejs.org/api/errors.html#errors_common_system_errors)
+<e> [webpack-dev-server] [HPM] Error occurred while proxying request 127.0.0.1:4201/api/services to http://localhost:8080/ [ECONNREFUSED] (https://nodejs.org/api/errors.html#errors_common_system_errors)
+<e> [webpack-dev-server] [HPM] Error occurred while proxying request 127.0.0.1:4201/api/bookings to http://localhost:8080/ [ECONNREFUSED] (https://nodejs.org/api/errors.html#errors_common_system_errors)
