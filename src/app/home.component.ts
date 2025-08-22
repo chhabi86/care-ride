@@ -1,17 +1,19 @@
+
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   template: `
     <div style="position:relative;width:100vw;min-height:70vh;overflow:hidden;background:#f8f8f8;">
   <img src="assets/banner.jpg" alt="Medical Transportation Banner" style="width:100vw;height:70vh;object-fit:cover;object-position:center;filter:brightness(0.7);position:absolute;top:0;left:0;z-index:0;" />
       <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:70vh;">
         <h1 style="color:#fff;font-size:2.5rem;font-weight:700;text-align:center;margin-bottom:18px;max-width:700px;">The easiest way to order wheelchair-accessible rides</h1>
         <p style="color:#fff;font-size:1.2rem;text-align:center;max-width:600px;margin-bottom:24px;">Getting a wheelchair-accessible ride should be just as easy as getting one that’s not. CareRide Technology makes it possible by uniting certified service and patients for more freedom and mobility of life.</p>
-        <a href="#" style="background:#f59e0b;color:#fff;font-weight:600;padding:12px 32px;border-radius:8px;font-size:1.1rem;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.12);">Book a ride</a>
+  <a routerLink="/book" style="background:#f59e0b;color:#fff;font-weight:600;padding:12px 32px;border-radius:8px;font-size:1.1rem;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.12);">Book a ride</a>
       </div>
     </div>
     <div style="background:#fff;padding:60px 0 40px 0;">
@@ -29,7 +31,7 @@ import { CommonModule } from '@angular/common';
           <div style="font-weight:600;color:#0f766e;text-align:center;">Careful data and licensed drivers</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;max-width:160px;">
-          <img src="assets/services/physical-therapy.png" alt="Transparent pricing model" style="width:56px;height:56px;margin-bottom:12px;" />
+          <img src="assets/services/physical-therapy.jpg" alt="Transparent pricing model" style="width:56px;height:56px;margin-bottom:12px;" />
           <div style="font-weight:600;color:#0f766e;text-align:center;">Transparent pricing model</div>
         </div>
       </div>

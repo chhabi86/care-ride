@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
           <div style="width:140px;height:140px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:transparent;">
             <img [src]="s.icon" [alt]="s.name"
               [ngStyle]="
-                s.name.startsWith('Doctor') || s.name.startsWith('Hospital')
+                s.name.startsWith('Doctor') || s.name.startsWith('Hospital') || s.name.startsWith('Physical Therapy') || s.name.startsWith('Dialysis') || s.name.startsWith('Chemotherapy') || s.name.startsWith('Radiation') || s.name.startsWith('Medical Testing') || s.name.startsWith('Surgery') || s.name.startsWith('Follow-Up') || s.name.startsWith('Discharge') || s.name.startsWith('Specialized Care') || s.name.startsWith('Ongoing Therapy')
                   ? {'object-fit':'cover','width':'100%','height':'100%','border-radius':'12px'}
                   : {'object-fit':'contain','width':'100%','height':'100%'}
               " />
@@ -35,16 +35,16 @@ import { CommonModule } from '@angular/common';
 export class ServicesComponent {
   serviceList = [
     { name: "Doctor's Appointments Transportation Service", desc: "Safe, timely rides for medical appointments.", icon: 'assets/services/doctor.jpg' },
-  { name: "Hospital Visits Transportation Service", desc: "Reliable transportation for emergency and scheduled hospital visits.", icon: 'assets/services/hospital.jpg' },
-    { name: "Physical Therapy Sessions Transportation Service", desc: "Comfortable rides to and from physical therapy sessions.", icon: 'assets/services/physical-therapy.png' },
-    { name: "Dialysis Treatment Transportation Service", desc: "Dependable service for regular dialysis appointments.", icon: 'assets/services/dialysis.png' },
-    { name: "Chemotherapy Sessions Transportation Service", desc: "Supportive rides to chemotherapy treatments.", icon: 'assets/services/chemotherapy.png' },
-    { name: "Radiation Therapy Appointments Transportation Service", desc: "Safe transport for ongoing radiation therapy sessions.", icon: 'assets/services/radiation.png' },
-    { name: "Medical Testing Transportation Service", desc: "Easy access to labs and testing appointments.", icon: 'assets/services/testing.png' },
-    { name: "Surgery or Procedure Appointments Transportation Service", desc: "Pre- and post-surgery transportation for procedures.", icon: 'assets/services/surgery.png' },
-    { name: "Follow-Up or Post-Operative Appointments", desc: "Reliable rides for all post-surgery follow-ups.", icon: 'assets/services/followup.png' },
-    { name: "Discharge from Hospital or Rehabilitation Center", desc: "Safe rides home after hospital or rehab stays.", icon: 'assets/services/discharge.png' },
-    { name: "Specialized Care Facility Transportation", desc: "Transportation to/from nursing or specialized care facilities.", icon: 'assets/services/specialized-care.png' },
-    { name: "Ongoing Therapy or Treatment Appointments Transportation", desc: "Consistent rides for ongoing therapy and treatment.", icon: 'assets/services/ongoing-therapy.png' }
+    { name: "Hospital Visits Transportation Service", desc: "Reliable transportation for emergency and scheduled hospital visits.", icon: 'assets/services/hospital.jpg' },
+    { name: "Physical Therapy Sessions Transportation Service", desc: "Comfortable rides to and from physical therapy sessions.", icon: 'assets/services/physical-therapy.jpg' },
+    { name: "Dialysis Treatment Transportation Service", desc: "Dependable service for regular dialysis appointments.", icon: 'assets/services/dialysis.jpg' },
+  { name: "Chemotherapy Sessions Transportation Service", desc: "Supportive rides to chemotherapy treatments.", icon: 'assets/services/chemotherapy.jpg' },
+  { name: "Radiation Therapy Appointments Transportation Service", desc: "Safe transport for ongoing radiation therapy sessions.", icon: 'assets/services/radiation.jpg' },
+  { name: "Medical Testing Transportation Service", desc: "Easy access to labs and testing appointments.", icon: 'assets/services/testing.jpg' },
+  { name: "Surgery or Procedure Appointments Transportation Service", desc: "Pre- and post-surgery transportation for procedures.", icon: 'assets/services/surgery.jpg' },
+  { name: "Follow-Up or Post-Operative Appointments", desc: "Reliable rides for all post-surgery follow-ups.", icon: 'assets/services/followup.jpg' },
+  { name: "Discharge from Hospital or Rehabilitation Center", desc: "Safe rides home after hospital or rehab stays.", icon: 'assets/services/discharge.jpg' },
+  { name: "Specialized Care Facility Transportation", desc: "Transportation to/from nursing or specialized care facilities.", icon: 'assets/services/specialized-care.jpg' },
+  { name: "Ongoing Therapy or Treatment Appointments Transportation", desc: "Consistent rides for ongoing therapy and treatment.", icon: 'assets/services/ongoing-therapy.jpg' }
   ];
 }
