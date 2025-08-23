@@ -8,22 +8,24 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
-    <div style="position:relative;width:100vw;min-height:70vh;overflow:hidden;background:#f8f8f8;">
-  <img src="assets/banner.jpg" alt="Medical Transportation Banner" style="width:100vw;height:70vh;object-fit:cover;object-position:center;filter:brightness(0.7);position:absolute;top:0;left:0;z-index:0;" />
-      <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:70vh;">
-        <h1 style="color:#fff;font-size:2.5rem;font-weight:700;text-align:center;margin-bottom:18px;max-width:700px;">The easiest way to order wheelchair-accessible rides</h1>
-        <p style="color:#fff;font-size:1.2rem;text-align:center;max-width:600px;margin-bottom:24px;">Getting a wheelchair-accessible ride should be just as easy as getting one that’s not. CareRide Technology makes it possible by uniting certified service and patients for more freedom and mobility of life.</p>
-  <a routerLink="/book" style="background:#f59e0b;color:#fff;font-weight:600;padding:12px 32px;border-radius:8px;font-size:1.1rem;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.12);">Book a ride</a>
+    <div style="position:relative;width:100vw;min-height:70vh;overflow:hidden;background:#f8f8f8;display:flex;align-items:center;justify-content:center;">
+      <img [src]="currentImage" alt="Slideshow"
+        [style.opacity]="imageOpacity"
+        style="width:100vw;height:70vh;object-fit:cover;object-position:center;transition:opacity 2.5s;" />
+      <div style="position:absolute;top:0;left:0;width:100vw;height:70vh;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+  <h1 style="color:#0f766e;font-size:2.5rem;font-weight:700;text-align:center;margin-bottom:18px;max-width:700px;">The easiest way to order wheelchair-accessible rides</h1>
+  <p style="color:#0f766e;font-size:1.2rem;text-align:center;max-width:600px;margin-bottom:24px;">Getting a wheelchair-accessible ride should be just as easy as getting one that’s not. CareRide Technology makes it possible by uniting certified service and patients for more freedom and mobility of life.</p>
+        <a routerLink="/book" style="background:#f59e0b;color:#fff;font-weight:600;padding:12px 32px;border-radius:8px;font-size:1.1rem;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.12);">Book a ride</a>
       </div>
     </div>
     <div style="background:#fff;padding:60px 0 40px 0;">
       <div style="display:flex;justify-content:center;gap:48px;flex-wrap:wrap;max-width:1100px;margin:0 auto 40px auto;">
         <div style="display:flex;flex-direction:column;align-items:center;max-width:160px;">
-          <img src="assets/services/wheelchair.png" alt="Easy and secure on request" style="width:56px;height:56px;margin-bottom:12px;" />
+          <img src="assets/services/hospital.jpg" alt="Easy and secure on request" style="width:56px;height:56px;margin-bottom:12px;" />
           <div style="font-weight:600;color:#0f766e;text-align:center;">Easy and secure on request</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;max-width:160px;">
-          <img src="assets/services/doctor.jpg" alt="Secure door-to-door transportation" style="width:56px;height:56px;margin-bottom:12px;" />
+          <img src="assets/services/SecureTransportation.jpg" alt="Secure door-to-door transportation" style="width:56px;height:56px;margin-bottom:12px;" />
           <div style="font-weight:600;color:#0f766e;text-align:center;">Secure door-to-door transportation</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;max-width:160px;">
@@ -67,4 +69,28 @@ import { RouterModule } from '@angular/router';
     </div>
   `
 })
-export class HomeComponent {}
+export class HomeComponent {
+  imageOpacity = 1;
+  imageList = [
+    'assets/banner.jpg',
+    'assets/services/doctor.jpg',
+    'assets/services/hospital.jpg',
+    'assets/services/physical-therapy.jpg',
+    'assets/services/chemotherapy.jpg',
+    'assets/services/dialysis.jpg'
+    // Add more image paths as needed
+  ];
+  currentImageIndex = 0;
+  currentImage = this.imageList[0];
+
+  ngOnInit() {
+    setInterval(() => {
+      this.imageOpacity = 0;
+      setTimeout(() => {
+        this.currentImageIndex = (this.currentImageIndex + 1) % this.imageList.length;
+        this.currentImage = this.imageList[this.currentImageIndex];
+        this.imageOpacity = 1;
+      }, 2500); // fade out duration (2.5s for a more pronounced fade)
+    }, 7000); // 7 seconds per image (slower transition)
+  }
+}

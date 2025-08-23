@@ -27,9 +27,7 @@ import { ApiService, ServiceType } from './api.service';
     </header>
     <section style="background:#0f766e;color:#fff;padding:60px 0">
       <div class="container">
-        <h1>MEDICAL TRANSPORTATION</h1>
-        <p>Safe and reliable non-emergency transport for patients.</p>
-        <a routerLink="/book" style="display:inline-block;background:#f59e0b;color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;margin-top:12px">GET A QUOTE</a>
+      
       </div>
     </section>
     <router-outlet></router-outlet>
