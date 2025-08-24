@@ -21,6 +21,7 @@ import { ApiService, ServiceType } from './api.service';
           <a routerLink="/" routerLinkActive="active">Home</a>
           <a routerLink="/services" routerLinkActive="active">Services</a>
           <a routerLink="/book" routerLinkActive="active">Book</a>
+          <a routerLink="/about" routerLinkActive="active">About Us</a>
           <a routerLink="/contact" routerLinkActive="active">Contact</a>
         </nav>
       </div>
@@ -50,7 +51,7 @@ import { ApiService, ServiceType } from './api.service';
           <div style="font-size:1.5rem;font-weight:700;color:#7be495;margin-bottom:18px;">Quick Links</div>
           <div style="display:flex;flex-direction:column;gap:10px;">
             <a href="#" style="color:#7be495;font-weight:600;text-decoration:none;">Home</a>
-            <a href="#" style="color:#fff;text-decoration:none;">About Us</a>
+             <a routerLink="/about" style="color:#fff;text-decoration:none;">About Us</a>
               <a routerLink="/book" style="color:#fff;text-decoration:none;">Book</a>
               <a routerLink="/services" style="color:#fff;text-decoration:none;">Services</a>
             <a routerLink="/contact" style="color:#fff;text-decoration:none;">Contact Us</a>
@@ -68,10 +69,10 @@ import { ApiService, ServiceType } from './api.service';
         <div style="flex:1;min-width:240px;padding:48px 0 24px 0;">
           <div style="font-size:1.5rem;font-weight:700;color:#7be495;margin-bottom:18px;">Contact Information</div>
           <div style="display:flex;flex-direction:column;gap:12px;color:#fff;">
-            <div><span style="color:#7be495;margin-right:8px;">&#x260E;</span> (716) 333 – 7433</div>
-            <div><span style="color:#7be495;margin-right:8px;">&#x1F4F2;</span> (716) 335 – 5031</div>
-            <div><span style="color:#7be495;margin-right:8px;">&#x2709;</span> cs&#64;independentrides.com</div>
-            <div><span style="color:#7be495;margin-right:8px;">&#x1F4CD;</span> Buffalo, NY 14218</div>
+            <div><span style="color:#7be495;margin-right:8px;">&#x260E;</span> (814) 528 - 4547</div>
+            <div><span style="color:#7be495;margin-right:8px;">&#x1F4F2;</span> (814) 528 - 4547</div>
+            <div><span style="color:#7be495;margin-right:8px;">&#x2709;</span> info&#64;careridesolutionspa.com</div>
+            <div><span style="color:#7be495;margin-right:8px;">&#x1F4CD;</span> Erie, PA, 16506</div>
           </div>
         </div>
       </div>

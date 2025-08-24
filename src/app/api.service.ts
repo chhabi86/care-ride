@@ -17,5 +17,5 @@ export class ApiService {
   constructor(private http: HttpClient) {}
   services(): Observable<ServiceType[]> { return this.http.get<ServiceType[]>(`${this.base}/services`); }
   book(payload: BookingPayload){ return this.http.post(`${this.base}/bookings`, payload); }
-  contact(payload: {name:string; email:string; message:string}) { return this.http.post(`${this.base}/contact`, payload); }
+  contact(payload: {name:string; email:string; phone:string; reason:string; message:string}) { return this.http.post(`${this.base}/contact`, payload); }
 }
