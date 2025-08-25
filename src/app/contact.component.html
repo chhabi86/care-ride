@@ -24,14 +24,16 @@
       </div>
     </div>
     <form #contactForm="ngForm" (ngSubmit)="submitContact()" style="display:flex;flex-direction:column;gap:16px;background:#fff;border-radius:18px;box-shadow:0 4px 24px rgba(0,0,0,.08);padding:32px 24px;width:100%;flex:1 1 0;z-index:2;position:relative;">
-  <div *ngIf="sent" id="contact-success" style="color:#059669;font-weight:700;font-size:1.15rem;margin-bottom:10px;">Thank you! Your message has been sent.</div>
+  <div id="contact-success" [class.hidden]="!sent" [class.contact-success--hiding]="hiding" role="status" aria-live="polite" style="color:#059669;font-weight:700;font-size:1.15rem;margin-bottom:10px;position:relative;padding-right:28px;">Request submitted. We'll contact you shortly.
+    <button aria-label="Dismiss" class="contact-close" (click)="dismissSuccess()">×</button>
+  </div>
     <div *ngIf="error" style="color:#e11d48;font-weight:600;font-size:1.08rem;margin-bottom:10px;">{{error}}</div>
     <input type="text" placeholder="Full Name*" required [(ngModel)]="name" name="name" style="padding:14px 16px;border-radius:32px;border:1px solid #ddd;font-size:1.08rem;outline:none;">
     <input type="text" placeholder="Phone*" required [(ngModel)]="phone" name="phone" style="padding:14px 16px;border-radius:32px;border:1px solid #ddd;font-size:1.08rem;outline:none;">
     <input type="email" placeholder="Email*" required [(ngModel)]="email" name="email" style="padding:14px 16px;border-radius:32px;border:1px solid #ddd;font-size:1.08rem;outline:none;">
     <input type="text" placeholder="Reason of Contact*" required [(ngModel)]="reason" name="reason" style="padding:14px 16px;border-radius:32px;border:1px solid #ddd;font-size:1.08rem;outline:none;">
     <textarea placeholder="How can we help?" required [(ngModel)]="message" name="message" style="padding:14px 16px;border-radius:32px;border:1px solid #ddd;font-size:1.08rem;outline:none;min-height:70px;resize:vertical;"></textarea>
-  <button type="submit" (click)="submitContact()" class="send-now" [disabled]="sending || sent" style="background:#2e7d5a;color:#fff;font-weight:600;padding:14px 0;border:none;border-radius:32px;font-size:1.15rem;box-shadow:0 2px 8px rgba(46,125,90,0.08);margin-top:8px;pointer-events:auto;position:relative;z-index:9999;">Send Now</button>
+  <button type="button" (click)="submitContact()" class="send-now" [disabled]="sending || sent" style="background:#2e7d5a;color:#fff;font-weight:600;padding:14px 0;border:none;border-radius:32px;font-size:1.15rem;box-shadow:0 2px 8px rgba(46,125,90,0.08);margin-top:8px;pointer-events:auto;position:relative;z-index:9999;">Send Now</button>
     </form>
   </div>
 </section>

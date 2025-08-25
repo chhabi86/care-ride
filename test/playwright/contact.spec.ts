@@ -29,9 +29,9 @@ test('contact form submit', async ({ page }) => {
   try { body = await response.text(); } catch (e) { body = '<unreadable>'; }
   fs.writeFileSync('test/playwright/contact-console.log', logs.join('\n') + `\nRESPONSE STATUS: ${status}\nRESPONSE BODY:\n${body}`);
 
-  // wait for success message using stable id (longer timeout)
-  // confirm the DOM-level attribute placed by the app (reliable signal)
-  await page.waitForFunction(() => document.body.getAttribute('data-contact-sent') === '1', { timeout: 10000 });
-  const flag = await page.evaluate(() => document.body.getAttribute('data-contact-sent'));
-  expect(flag).toBe('1');
+  // wait for visible banner by id and assert its text
+  const success = page.locator('#contact-success');
+  await expect(success).toBeVisible({ timeout: 7000 });
+  const txt = (await success.textContent()) || '';
+  if (!txt.includes("Request submitted.")) throw new Error('Unexpected success text: ' + txt);
 });
