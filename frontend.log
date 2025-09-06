@@ -1213,3 +1213,89 @@ Build at: 2025-08-25T12:21:28.732Z - Hash: 7c6330bfaf12081a - Time: 617ms
     [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|javascript/esm|/Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/router/fesm2022/router.mjs': 2.301875 ms
 <t> [webpack.cache.PackFileCacheStrategy] store pack: 42.186334 ms
     [webpack.cache.PackFileCacheStrategy] Stored pack (1179 items, 17 files, 172 MiB)
+    [webpack-dev-middleware] Compilation starting...
+<t> [webpack.cache.PackFileCacheStrategy] restore cache container: 4.450125 ms
+<t> [webpack.cache.PackFileCacheStrategy] check build dependencies: 0.124833 ms
+<t> [webpack.cache.PackFileCacheStrategy] restore cache content metadata: 1.559208 ms
+    [webpack.cache.PackFileCacheStrategy] starting to restore cache content 0 (808 KiB) because of request to: ResolverCachePlugin|normal|default|dependencyType=|esm|path=|/Users/chhabisharma/Documents/care-ride-site/frontend|request=|/Users/chhabisharma/Documents/care-ride-site/frontend/src/app/contact.component.scss?ngResource
+    [webpack.cache.PackFileCacheStrategy] Deserialization of 'ResolverCachePlugin|normal|default|dependencyType=|esm|path=|/Users/chhabisharma/Documents/care-ride-site/frontend|request=|/Users/chhabisharma/Documents/care-ride-site/frontend/src/app/contact.component.scss?ngResource': 2.082333 ms
+<t> [webpack.cache.PackFileCacheStrategy] restore cache content 0 (808 KiB): 10.880375 ms
+✔ Browser application bundle generation complete.
+<e> [webpack-dev-middleware] HookWebpackError: Cannot find module './javascript-optimizer-worker'
+<e> Require stack:
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/plugins/javascript-optimizer-plugin.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/plugins/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/configs/common.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/configs/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/builders/dev-server/webpack-server.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/builders/dev-server/builder.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/builders/dev-server/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/architect/node/node-modules-architect-host.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/architect/node/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/command-builder/architect-base-command-module.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/command-builder/architect-command-module.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/commands/serve/cli.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/commands/command-config.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/command-builder/command-runner.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/lib/cli/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/lib/init.js
+<e>     at makeWebpackError (/Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/webpack/lib/HookWebpackError.js:48:9)
+<e>     at /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/webpack/lib/Compilation.js:3204:12
+<e>     at eval (eval at create (/Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:132:1)
+<e>     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+<e> -- inner error --
+<e> Error: Cannot find module './javascript-optimizer-worker'
+<e> Require stack:
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/plugins/javascript-optimizer-plugin.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/plugins/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/configs/common.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/configs/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/builders/dev-server/webpack-server.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/builders/dev-server/builder.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/builders/dev-server/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/architect/node/node-modules-architect-host.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/architect/node/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/command-builder/architect-base-command-module.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/command-builder/architect-command-module.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/commands/serve/cli.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/commands/command-config.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/command-builder/command-runner.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/lib/cli/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/lib/init.js
+<e>     at Function._resolveFilename (node:internal/modules/cjs/loader:1249:15)
+<e>     at Function.resolve (node:internal/modules/helpers:151:19)
+<e>     at /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/plugins/javascript-optimizer-plugin.js:115:44
+<e>     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+<e> caused by plugins in Compilation.hooks.processAssets
+<e> Error: Cannot find module './javascript-optimizer-worker'
+<e> Require stack:
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/plugins/javascript-optimizer-plugin.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/plugins/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/configs/common.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/configs/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/builders/dev-server/webpack-server.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/builders/dev-server/builder.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/builders/dev-server/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/architect/node/node-modules-architect-host.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/architect/node/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/command-builder/architect-base-command-module.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/command-builder/architect-command-module.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/commands/serve/cli.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/commands/command-config.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/src/command-builder/command-runner.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/lib/cli/index.js
+<e> - /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/cli/lib/init.js
+<e>     at Function._resolveFilename (node:internal/modules/cjs/loader:1249:15)
+<e>     at Function.resolve (node:internal/modules/helpers:151:19)
+<e>     at /Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/webpack/plugins/javascript-optimizer-plugin.js:115:44
+<e>     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    [webpack.cache.PackFileCacheStrategy] Pack got invalid because of write to: ResolverCachePlugin|normal|default|dependencyType=|esm|path=|/Users/chhabisharma/Documents/care-ride-site/frontend|request=|zone.js
+    [webpack.cache.PackFileCacheStrategy] Storing pack...
+    [webpack.cache.PackFileCacheStrategy] 13 fresh items in cache put into pack 5
+    [webpack.cache.PackFileCacheStrategy] starting to unpack cache content 24 (35.8 MiB) because it's outdated and need to be serialized
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|javascript/esm|/Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/forms/fesm2022/forms.mjs': 2.805584 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|javascript/esm|/Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular/router/fesm2022/router.mjs': 1.718792 ms
+<t> [webpack.cache.PackFileCacheStrategy] unpack cache content 24 (35.8 MiB): 30.023833 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|/Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/Users/chhabisharma/Documents/care-ride-site/frontend/node_modules/@ngtools/webpack/src/ivy/index.js!/Users/chhabisharma/Documents/care-ride-site/frontend/src/main.ts|3bc780a3251264ce|runtime': 1.557208 ms
+<t> [webpack.cache.PackFileCacheStrategy] store pack: 48.743708 ms
+    [webpack.cache.PackFileCacheStrategy] Stored pack (1181 items, 18 files, 172 MiB)
