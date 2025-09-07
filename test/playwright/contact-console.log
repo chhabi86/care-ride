@@ -1,0 +1,5 @@
+info: [webpack-dev-server] Server started: Hot Module Replacement disabled, Live Reloading enabled, Progress disabled, Overlay enabled.
+error: Failed to load resource: the server responded with a status of 404 (Not Found)
+RESPONSE STATUS: 201
+RESPONSE BODY:
+{"id":28,"status":"sent"}
