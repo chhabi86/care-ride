@@ -35,17 +35,17 @@ jobs:
         env:
           DEPLOY_DOMAIN: ${{ secrets.DEPLOY_DOMAIN }}
         run: |
-          set -euo pipefail
+          set -eo pipefail
           if [ -z "${DEPLOY_DOMAIN:-}" ]; then
             echo "ERROR: DEPLOY_DOMAIN secret is not set; add it in repository Settings -> Secrets and retry." >&2
             exit 1
           fi
           echo "Connecting to ${{ secrets.DEPLOY_HOST }} as ${{ secrets.DEPLOY_USER }}"
-          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key -p "${{ secrets.DEPLOY_SSH_PORT }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" bash -s <<REMOTE
+          echo "${DEPLOY_DOMAIN}" | ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key -p "${{ secrets.DEPLOY_SSH_PORT }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" bash -s <<'REMOTE'
             set -eo pipefail
-            DOMAIN="${DEPLOY_DOMAIN}"
-            if [ -z "${DOMAIN}" ]; then
-              echo "ERROR: DEPLOY_DOMAIN not provided (empty)" >&2
+            read -r DOMAIN
+            if [ -z "$DOMAIN" ]; then
+              echo "ERROR: Domain value piped in is empty" >&2
               exit 1
             fi
             echo "Running remote deploy on \${HOSTNAME:-remote} with DOMAIN=\${DOMAIN}"
@@ -76,8 +76,8 @@ jobs:
             echo "Starting deploy.sh (may take several minutes)"
             # Pass DOMAIN explicitly through sudo so it isn't stripped.
             if [ -x backend/deploy.sh ]; then
-              sudo DOMAIN="${DOMAIN}" backend/deploy.sh
+              sudo DOMAIN="$DOMAIN" backend/deploy.sh
             else
-              sudo DOMAIN="${DOMAIN}" ./deploy.sh
+              sudo DOMAIN="$DOMAIN" ./deploy.sh
             fi
           REMOTE
