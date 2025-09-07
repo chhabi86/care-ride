@@ -42,8 +42,12 @@ jobs:
           fi
           echo "Connecting to ${{ secrets.DEPLOY_HOST }} as ${{ secrets.DEPLOY_USER }}"
           ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key -p "${{ secrets.DEPLOY_SSH_PORT }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" <<REMOTE
-            set -euo pipefail
+            set -eo pipefail
             DOMAIN_VALUE="${DEPLOY_DOMAIN}"
+            if [ -z "${DOMAIN_VALUE}" ]; then
+              echo "ERROR: DOMAIN not provided to remote script" >&2
+              exit 1
+            fi
             echo "Running remote deploy on \\${HOSTNAME:-remote} with DOMAIN=\\${DOMAIN_VALUE}"
             # Ensure /opt exists and is writable by the deploy user
             if [ ! -d /opt ]; then
