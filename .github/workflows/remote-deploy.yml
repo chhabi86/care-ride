@@ -13,7 +13,7 @@ jobs:
       - name: Prepare SSH key
         shell: bash
         run: |
-          set -euo pipefail
+          set -eo pipefail
           if [ -n "${{ secrets.DEPLOY_SSH_KEY_B64 }}" ]; then
             echo "Decoding base64 SSH key"
             echo "${{ secrets.DEPLOY_SSH_KEY_B64 }}" | base64 -d > /tmp/deploy_key || { echo "Base64 decode failed" >&2; exit 1; }
@@ -41,14 +41,14 @@ jobs:
             exit 1
           fi
           echo "Connecting to ${{ secrets.DEPLOY_HOST }} as ${{ secrets.DEPLOY_USER }}"
-          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key -p "${{ secrets.DEPLOY_SSH_PORT }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" <<REMOTE
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key -p "${{ secrets.DEPLOY_SSH_PORT }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" bash -s <<'REMOTE'
             set -eo pipefail
             DOMAIN_VALUE="${DEPLOY_DOMAIN}"
-            if [ -z "${DOMAIN_VALUE}" ]; then
-              echo "ERROR: DOMAIN not provided to remote script" >&2
+            if [ -z "${DEPLOY_DOMAIN}" ]; then
+              echo "ERROR: DEPLOY_DOMAIN not passed through SSH" >&2
               exit 1
             fi
-            echo "Running remote deploy on \\${HOSTNAME:-remote} with DOMAIN=\\${DOMAIN_VALUE}"
+            echo "Running remote deploy on ${HOSTNAME:-remote} with DOMAIN=${DEPLOY_DOMAIN}"
             # Ensure /opt exists and is writable by the deploy user
             if [ ! -d /opt ]; then
               sudo mkdir -p /opt
@@ -76,8 +76,8 @@ jobs:
             echo "Starting deploy.sh (may take several minutes)"
             # Pass DOMAIN explicitly through sudo so it isn't stripped.
             if [ -x backend/deploy.sh ]; then
-              sudo DOMAIN="${DOMAIN_VALUE}" backend/deploy.sh
+              sudo DOMAIN="${DEPLOY_DOMAIN}" backend/deploy.sh
             else
-              sudo DOMAIN="${DOMAIN_VALUE}" ./deploy.sh
+              sudo DOMAIN="${DEPLOY_DOMAIN}" ./deploy.sh
             fi
           REMOTE
