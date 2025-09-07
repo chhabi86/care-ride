@@ -3,9 +3,10 @@ server:
   port: 8080
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:careride}
-    username: ${DB_USER:careride}
-    password: ${DB_PASS:careride}
+    # Prefer full SPRING_DATASOURCE_URL if provided, otherwise build from DB_* pieces (default service name 'db').
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${DB_HOST:db}:${DB_PORT:5432}/${DB_NAME:caredb}}
+    username: ${SPRING_DATASOURCE_USERNAME:${DB_USER:careuser}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${DB_PASS:changeme_db_password}}
   jpa:
     hibernate:
       ddl-auto: update
