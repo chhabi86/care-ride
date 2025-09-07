@@ -41,14 +41,13 @@ jobs:
             exit 1
           fi
           echo "Connecting to ${{ secrets.DEPLOY_HOST }} as ${{ secrets.DEPLOY_USER }}"
-          echo "${DEPLOY_DOMAIN}" | ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key -p "${{ secrets.DEPLOY_SSH_PORT }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" bash -s <<'REMOTE'
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key -p "${{ secrets.DEPLOY_SSH_PORT }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" "DOMAIN=${DEPLOY_DOMAIN} bash -s" <<'REMOTE'
             set -eo pipefail
-            read -r DOMAIN
             if [ -z "$DOMAIN" ]; then
-              echo "ERROR: Domain value piped in is empty" >&2
+              echo "ERROR: DOMAIN environment variable not received on remote" >&2
               exit 1
             fi
-            echo "Running remote deploy on \${HOSTNAME:-remote} with DOMAIN=\${DOMAIN}"
+            echo "Running remote deploy on ${HOSTNAME:-remote} with DOMAIN=${DOMAIN}"
             # Ensure /opt exists and is writable by the deploy user
             if [ ! -d /opt ]; then
               sudo mkdir -p /opt
