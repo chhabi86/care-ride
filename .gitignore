@@ -1,3 +1,18 @@
 # macOS system files
 .DS_Store
 src/.DS_Store
+
+# Build outputs
+**/dist/
+frontend-dist.tar.gz
+
+# Angular cache
+.angular/cache/
+
+# Deployment artifacts
+*.html
+*_files/
+
+# Environment files (keep examples, not actual .env files)
+*.env
+!*.env.example
