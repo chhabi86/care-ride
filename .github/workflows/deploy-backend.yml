@@ -17,17 +17,35 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Login to ECR
-        uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+          region: ${{ secrets.AWS_REGION }}
+
+      - name: Validate required secrets
+        run: |
+          missing=()
+          for v in AWS_REGION AWS_ACCOUNT_ID S3_BUCKET EB_APPLICATION EB_ENVIRONMENT; do
+            if [ -z "${!v}" ]; then missing+=("$v"); fi
+          done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "Missing required secrets: ${missing[*]}" >&2
+            exit 1
+          fi
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          EB_APPLICATION: ${{ secrets.EB_APPLICATION }}
+          EB_ENVIRONMENT: ${{ secrets.EB_ENVIRONMENT }}
 
       - name: Build and push Docker image to ECR
         env:
@@ -57,7 +75,16 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           EB_APP: ${{ secrets.EB_APPLICATION }}
           EB_ENV: ${{ secrets.EB_ENVIRONMENT }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
         run: |
-          aws elasticbeanstalk create-application-version --application-name $EB_APP --version-label $GITHUB_SHA --source-bundle S3Bucket=${{ secrets.S3_BUCKET }},S3Key=eb-dockerrun-$GITHUB_SHA.zip --region $AWS_REGION || true
-          aws s3 cp eb-dockerrun.zip s3://${{ secrets.S3_BUCKET }}/eb-dockerrun-$GITHUB_SHA.zip --region $AWS_REGION
-          aws elasticbeanstalk update-environment --environment-name $EB_ENV --version-label $GITHUB_SHA --region $AWS_REGION
+          set -euo pipefail
+          echo "Uploading Dockerrun bundle to S3..."
+          aws s3 cp eb-dockerrun.zip s3://$S3_BUCKET/eb-dockerrun-$GITHUB_SHA.zip --region $AWS_REGION
+          echo "Creating new EB application version..."
+          aws elasticbeanstalk create-application-version \
+            --application-name $EB_APP \
+            --version-label $GITHUB_SHA \
+            --source-bundle S3Bucket=$S3_BUCKET,S3Key=eb-dockerrun-$GITHUB_SHA.zip \
+            --region $AWS_REGION
+          echo "Updating EB environment..."
+            aws elasticbeanstalk update-environment --environment-name $EB_ENV --version-label $GITHUB_SHA --region $AWS_REGION
