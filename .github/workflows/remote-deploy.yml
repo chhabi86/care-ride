@@ -10,12 +10,25 @@ jobs:
     name: Remote deploy (SSH)
     runs-on: ubuntu-latest
     steps:
-      - name: Write SSH key to temporary file
+      - name: Prepare SSH key
         shell: bash
         run: |
-          # ensure we don't print the key
-          printf "%s\n" "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
+          set -euo pipefail
+          if [ -n "${{ secrets.DEPLOY_SSH_KEY_B64 }}" ]; then
+            echo "Decoding base64 SSH key"
+            echo "${{ secrets.DEPLOY_SSH_KEY_B64 }}" | base64 -d > /tmp/deploy_key || { echo "Base64 decode failed" >&2; exit 1; }
+          else
+            printf "%s" "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
+          fi
+          # Convert literal \n sequences to real newlines if present (some users paste escaped form)
+          if grep -q '\\n' /tmp/deploy_key; then
+            sed -e 's/\\n/\n/g' /tmp/deploy_key > /tmp/deploy_key.tmp && mv /tmp/deploy_key.tmp /tmp/deploy_key
+          fi
+          # Strip CR in case of Windows line endings
+          sed -i 's/\r$//' /tmp/deploy_key || true
           chmod 600 /tmp/deploy_key
+          head -n1 /tmp/deploy_key | grep -q 'BEGIN OPENSSH PRIVATE KEY' || echo "WARNING: Key header not detected (ensure correct private key format)" >&2
+          ssh-keygen -lf /tmp/deploy_key || echo "(Fingerprint unavailable)"
 
       - name: Run remote deploy script over SSH (manual)
         shell: bash
