@@ -21,7 +21,7 @@ if [ -z "${DOMAIN:-}" ]; then
 fi
 
 apt update && apt upgrade -y
-apt install -y git curl nginx certbot python3-certbot-nginx
+apt install -y git curl nginx certbot python3-certbot-nginx rsync
 
 # install docker
 if ! command -v docker >/dev/null 2>&1; then
@@ -57,18 +57,13 @@ if [ -f backend/backend.env ] && [ ! -f backend.env ]; then
   fi
 fi
 
+if [ -x backend/deploy.sh ]; then
+  echo "Delegating to backend/deploy.sh (enhanced static frontend deploy)..."
+  exec backend/deploy.sh
+fi
+
+echo "backend/deploy.sh missing; performing minimal legacy compose deploy (no static frontend sync)"
 echo "Building and starting containers..."
 docker compose build
-docker compose up -d
-
-echo "Configuring nginx for $DOMAIN"
-NGINX_CONF="/etc/nginx/sites-available/care-ride"
-cp nginx/care-ride.conf $NGINX_CONF
-sed -i "s/server_name example.com www.example.com;/server_name $DOMAIN www.$DOMAIN;/" $NGINX_CONF
-ln -sf $NGINX_CONF /etc/nginx/sites-enabled/care-ride
-nginx -t && systemctl reload nginx
-
-echo "Obtaining TLS certificate via certbot..."
-certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m admin@$DOMAIN || true
-
-echo "Deployment complete. Visit https://$DOMAIN"
+docker compose up -d db backend
+echo "Minimal deploy done. Provide backend/deploy.sh for full static frontend workflow."
