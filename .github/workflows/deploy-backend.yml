@@ -1,0 +1,63 @@
+name: CI / Deploy Backend to Elastic Beanstalk
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Build and push Docker image to ECR
+        env:
+          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          IMAGE_NAME: care-ride-backend
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_REGISTRY
+          docker build -t $IMAGE_NAME:latest ./backend
+          docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:latest
+          aws ecr create-repository --repository-name $IMAGE_NAME --region ${{ secrets.AWS_REGION }} || true
+          docker push $ECR_REGISTRY/$IMAGE_NAME:latest
+
+      - name: Create Dockerrun zip
+        run: |
+          mkdir -p eb-deploy
+          jq '.Image.Name = env.ECR' Dockerrun.aws.json > eb-deploy/Dockerrun.aws.json || cp Dockerrun.aws.json eb-deploy/Dockerrun.aws.json
+        env:
+          ECR: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/care-ride-backend:latest
+
+      - name: Zip Dockerrun
+        run: |
+          cd eb-deploy
+          zip -r ../eb-dockerrun.zip .
+
+      - name: Deploy to Elastic Beanstalk
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          EB_APP: ${{ secrets.EB_APPLICATION }}
+          EB_ENV: ${{ secrets.EB_ENVIRONMENT }}
+        run: |
+          aws elasticbeanstalk create-application-version --application-name $EB_APP --version-label $GITHUB_SHA --source-bundle S3Bucket=${{ secrets.S3_BUCKET }},S3Key=eb-dockerrun-$GITHUB_SHA.zip --region $AWS_REGION || true
+          aws s3 cp eb-dockerrun.zip s3://${{ secrets.S3_BUCKET }}/eb-dockerrun-$GITHUB_SHA.zip --region $AWS_REGION
+          aws elasticbeanstalk update-environment --environment-name $EB_ENV --version-label $GITHUB_SHA --region $AWS_REGION
