@@ -41,14 +41,14 @@ jobs:
             exit 1
           fi
           echo "Connecting to ${{ secrets.DEPLOY_HOST }} as ${{ secrets.DEPLOY_USER }}"
-          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key -p "${{ secrets.DEPLOY_SSH_PORT }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" bash -s <<'REMOTE'
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_key -p "${{ secrets.DEPLOY_SSH_PORT }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" bash -s <<REMOTE
             set -eo pipefail
-            DOMAIN_VALUE="${DEPLOY_DOMAIN}"
-            if [ -z "${DEPLOY_DOMAIN}" ]; then
-              echo "ERROR: DEPLOY_DOMAIN not passed through SSH" >&2
+            DOMAIN="${DEPLOY_DOMAIN}"
+            if [ -z "${DOMAIN}" ]; then
+              echo "ERROR: DEPLOY_DOMAIN not provided (empty)" >&2
               exit 1
             fi
-            echo "Running remote deploy on ${HOSTNAME:-remote} with DOMAIN=${DEPLOY_DOMAIN}"
+            echo "Running remote deploy on \${HOSTNAME:-remote} with DOMAIN=\${DOMAIN}"
             # Ensure /opt exists and is writable by the deploy user
             if [ ! -d /opt ]; then
               sudo mkdir -p /opt
@@ -76,8 +76,8 @@ jobs:
             echo "Starting deploy.sh (may take several minutes)"
             # Pass DOMAIN explicitly through sudo so it isn't stripped.
             if [ -x backend/deploy.sh ]; then
-              sudo DOMAIN="${DEPLOY_DOMAIN}" backend/deploy.sh
+              sudo DOMAIN="${DOMAIN}" backend/deploy.sh
             else
-              sudo DOMAIN="${DEPLOY_DOMAIN}" ./deploy.sh
+              sudo DOMAIN="${DOMAIN}" ./deploy.sh
             fi
           REMOTE
