@@ -5,7 +5,8 @@ A full-stack web application providing specialized medical transportation servic
 ## 🚀 Live Application
 
 **Production URL:** https://careridesolutionspa.com  
-**IP Address:** http://167.99.55.181 (direct access)
+**IP Address:** http://167.99.55.181 (direct access)  
+**Auto-Deploy:** ✅ Active - Updates automatically on push
 
 ## 📋 Project Overview
 
