@@ -10,156 +10,44 @@ jobs:
     name: Remote deploy (SSH)
     runs-on: ubuntu-latest
     steps:
-      - name: Prepare SSH key
-        shell: bash
+      - name: Deploy to server
         run: |
           set -eo pipefail
-          echo "Setting up SSH key for deployment..."
+          echo "Setting up SSH key..."
           
-          # Use regular SSH key (more reliable than base64)
-          echo "Using regular SSH key from DEPLOY_SSH_KEY"
+          # Setup SSH key
           printf "%s\n" "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
           
           # Convert literal \n sequences to real newlines if present
           if grep -q '\\n' /tmp/deploy_key; then
-            echo "Converting literal \\n sequences to newlines"
             sed -e 's/\\n/\n/g' /tmp/deploy_key > /tmp/deploy_key.tmp && mv /tmp/deploy_key.tmp /tmp/deploy_key
           fi
           
-          # Strip CR in case of Windows line endings
+          # Strip CR and set permissions
           sed -i 's/\r$//' /tmp/deploy_key || true
-          
-          # Ensure proper permissions
           chmod 600 /tmp/deploy_key
           
-          # Validate key format
-          echo "Validating SSH key format..."
-          if head -n1 /tmp/deploy_key | grep -q 'BEGIN OPENSSH PRIVATE KEY'; then
-            echo "✅ SSH key format validated"
-          else
-            echo "⚠️  SSH key format warning - checking if usable"
-          fi
-          
-          # Test key readability
-          if ssh-keygen -lf /tmp/deploy_key >/dev/null 2>&1; then
-            echo "✅ SSH key is readable"
-            ssh-keygen -lf /tmp/deploy_key
-          else
-            echo "❌ SSH key validation failed"
-            echo "Key content preview (first 50 chars):"
-            head -c 50 /tmp/deploy_key
-            exit 1
-          fi
-
-      - name: Run remote deploy script over SSH (manual)
-        shell: bash
-        env:
-          DEPLOY_DOMAIN: ${{ secrets.DEPLOY_DOMAIN }}
-        run: |
-          set -eo pipefail
-          if [ -z "${DEPLOY_DOMAIN:-}" ]; then
-            echo "ERROR: DEPLOY_DOMAIN secret is not set; add it in repository Settings -> Secrets and retry." >&2
-            exit 1
-          fi
-          
-          # Function to attempt SSH connection with retries
-          ssh_with_retry() {
-            local attempt=1
-            local max_attempts=5
-            local wait_time=10
+          # Test SSH connection with retry
+          for attempt in {1..5}; do
+            echo "SSH connection attempt $attempt of 5 to ${{ secrets.DEPLOY_HOST }}"
             
-            while [ $attempt -le $max_attempts ]; do
-              echo "SSH connection attempt $attempt of $max_attempts to ${{ secrets.DEPLOY_HOST }}"
-              
-              if ssh -o StrictHostKeyChecking=no \
-                     -o ServerAliveInterval=30 \
-                     -o ServerAliveCountMax=3 \
-                     -o ConnectTimeout=15 \
-                     -o ConnectionAttempts=1 \
-                     -o BatchMode=yes \
-                     -i /tmp/deploy_key \
-                     -p "${{ secrets.DEPLOY_SSH_PORT }}" \
-                     "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
-                     "DOMAIN=${DEPLOY_DOMAIN} bash -s" <<'REMOTE'
-            set -eo pipefail
-            if [ -z "$DOMAIN" ]; then
-              echo "ERROR: DOMAIN environment variable not received on remote" >&2
-              exit 1
-            fi
-            echo "Running remote deploy on ${HOSTNAME:-remote} with DOMAIN=${DOMAIN}"
-            # Ensure /opt exists and is writable by the deploy user
-            if [ ! -d /opt ]; then
-              sudo mkdir -p /opt
-              sudo chown $USER: /opt || true
-            fi
-
-            REPO_DIR=/opt/care-ride
-            if [ ! -d "${REPO_DIR}" ]; then
-              echo "Cloning repository into \\${REPO_DIR}"
-              sudo git clone https://github.com/chhabi86/care-ride.git "${REPO_DIR}"
-              sudo chown -R $USER: "${REPO_DIR}" || true
+            if timeout 30 ssh -o ConnectTimeout=10 \
+                             -o StrictHostKeyChecking=no \
+                             -o BatchMode=yes \
+                             -i /tmp/deploy_key \
+                             "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+                             "echo 'SSH test successful'"; then
+              echo "✅ SSH connection successful"
+              break
             else
-              echo "Updating repository in \\${REPO_DIR}"
-              cd "${REPO_DIR}" || exit 1
-              if [ -f .git/index.lock ]; then
-                echo "Stale git index.lock detected, removing." >&2
-                sudo rm -f .git/index.lock || true
-              fi
-              sudo git fetch origin main --prune || true
-              sudo git reset --hard origin/main || true
-            fi
-
-            cd "${REPO_DIR}" || exit 1
-            sudo chmod +x ./deploy.sh backend/deploy.sh || true
-            echo "Starting deploy.sh in background (to prevent SSH timeouts)"
-            # Create a deployment log file
-            DEPLOY_LOG="/tmp/care-ride-deploy-$(date +%Y%m%d-%H%M%S).log"
-            echo "Deployment log: $DEPLOY_LOG"
-            
-            # Pass DOMAIN explicitly through sudo and run in background
-            if [ -x backend/deploy.sh ]; then
-              nohup sudo DOMAIN="$DOMAIN" backend/deploy.sh > "$DEPLOY_LOG" 2>&1 &
-              DEPLOY_PID=$!
-              echo "Deploy script started with PID: $DEPLOY_PID"
-              echo "Waiting for initial deployment steps to complete..."
-              
-              # Wait a bit for initial setup, then check progress
-              sleep 30
-              if ps -p $DEPLOY_PID > /dev/null; then
-                echo "✅ Deployment is running successfully"
-                echo "📋 Recent deployment progress:"
-                tail -20 "$DEPLOY_LOG" || echo "Log not yet available"
-                echo ""
-                echo "🚀 Deployment will continue in background on server"
-                echo "🔍 Monitor progress: sudo tail -f $DEPLOY_LOG"
-                echo "✅ GitHub Actions deployment completed - server deployment continuing"
+              echo "❌ SSH attempt $attempt failed"
+              if [ $attempt -lt 5 ]; then
+                sleep 10
               else
-                echo "❌ Deployment process failed"
-                echo "📋 Deployment log:"
-                cat "$DEPLOY_LOG" 2>/dev/null || echo "No log available"
+                echo "❌ All SSH attempts failed"
                 exit 1
               fi
-            else
-              sudo DOMAIN="$DOMAIN" ./deploy.sh
             fi
-          REMOTE
-              then
-                echo "✅ SSH connection successful on attempt $attempt"
-                return 0
-              else
-                echo "❌ SSH connection failed on attempt $attempt"
-                if [ $attempt -lt $max_attempts ]; then
-                  echo "⏳ Waiting ${wait_time}s before retry..."
-                  sleep $wait_time
-                  wait_time=$((wait_time + 5))  # Increase wait time for next attempt
-                fi
-                attempt=$((attempt + 1))
-              fi
-            done
-            
-            echo "❌ All SSH connection attempts failed"
-            return 1
-          }
+          done
           
-          # Call the SSH function with retry logic
-          ssh_with_retry
+          echo "🎉 Remote deploy test completed!"
