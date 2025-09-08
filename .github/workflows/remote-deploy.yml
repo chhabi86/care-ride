@@ -14,28 +14,42 @@ jobs:
         shell: bash
         run: |
           set -eo pipefail
-          # Try base64 first, but fallback gracefully to regular key
-          if [ -n "${{ secrets.DEPLOY_SSH_KEY_B64 }}" ]; then
-            echo "Attempting to decode base64 SSH key"
-            if echo "${{ secrets.DEPLOY_SSH_KEY_B64 }}" | base64 -d > /tmp/deploy_key 2>/dev/null; then
-              echo "Successfully decoded base64 SSH key"
-            else
-              echo "Base64 decode failed, falling back to regular SSH key"
-              printf "%s" "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
-            fi
-          else
-            echo "Using regular SSH key"
-            printf "%s" "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
-          fi
-          # Convert literal \n sequences to real newlines if present (some users paste escaped form)
+          echo "Setting up SSH key for deployment..."
+          
+          # Use regular SSH key (more reliable than base64)
+          echo "Using regular SSH key from DEPLOY_SSH_KEY"
+          printf "%s\n" "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
+          
+          # Convert literal \n sequences to real newlines if present
           if grep -q '\\n' /tmp/deploy_key; then
+            echo "Converting literal \\n sequences to newlines"
             sed -e 's/\\n/\n/g' /tmp/deploy_key > /tmp/deploy_key.tmp && mv /tmp/deploy_key.tmp /tmp/deploy_key
           fi
+          
           # Strip CR in case of Windows line endings
           sed -i 's/\r$//' /tmp/deploy_key || true
+          
+          # Ensure proper permissions
           chmod 600 /tmp/deploy_key
-          head -n1 /tmp/deploy_key | grep -q 'BEGIN OPENSSH PRIVATE KEY' || echo "WARNING: Key header not detected (ensure correct private key format)" >&2
-          ssh-keygen -lf /tmp/deploy_key || echo "(Fingerprint unavailable)"
+          
+          # Validate key format
+          echo "Validating SSH key format..."
+          if head -n1 /tmp/deploy_key | grep -q 'BEGIN OPENSSH PRIVATE KEY'; then
+            echo "✅ SSH key format validated"
+          else
+            echo "⚠️  SSH key format warning - checking if usable"
+          fi
+          
+          # Test key readability
+          if ssh-keygen -lf /tmp/deploy_key >/dev/null 2>&1; then
+            echo "✅ SSH key is readable"
+            ssh-keygen -lf /tmp/deploy_key
+          else
+            echo "❌ SSH key validation failed"
+            echo "Key content preview (first 50 chars):"
+            head -c 50 /tmp/deploy_key
+            exit 1
+          fi
 
       - name: Run remote deploy script over SSH (manual)
         shell: bash
