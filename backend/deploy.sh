@@ -46,7 +46,12 @@ if [ -f backend.env.example ] && [ ! -f backend.env ]; then
 fi
 
 echo "Stopping any existing stack (ignore errors if first run)..."
-docker compose -f docker-compose.yml down --remove-orphans || true
+# Stop all existing containers that might be using our ports
+docker stop $(docker ps -q) 2>/dev/null || true
+docker rm $(docker ps -aq) 2>/dev/null || true
+# Also try to stop with compose files
+docker compose -f docker-compose.yml down --remove-orphans 2>/dev/null || true
+docker-compose down 2>/dev/null || true
 
 echo "Building backend image (docker-compose.yml)..."
 docker compose -f docker-compose.yml build backend
