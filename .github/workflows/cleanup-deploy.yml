@@ -1,0 +1,51 @@
+name: Fix Deployment (Server Cleanup)
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  cleanup-deploy:
+    name: Clean and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup SSH and cleanup existing deployment
+        run: |
+          echo "🧹 Cleaning up server and deploying fresh..."
+          
+          # Setup SSH key
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          
+          ssh -o StrictHostKeyChecking=no \
+              -o ConnectTimeout=10 \
+              -i /tmp/deploy_key \
+              ubuntu@167.99.55.181 \
+              "DOMAIN='${{ secrets.DEPLOY_DOMAIN }}' bash -s" <<'CLEANUP'
+          set -e
+          
+          echo "🔍 Current server state:"
+          ls -la /opt/ || true
+          
+          echo "🧹 Stopping all containers..."
+          sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
+          sudo docker rm $(sudo docker ps -aq) 2>/dev/null || true
+          sudo docker system prune -f || true
+          
+          echo "📁 Setting up clean deployment directory..."
+          sudo rm -rf /opt/care-ride || true
+          sudo mkdir -p /opt/care-ride
+          sudo chown ubuntu:ubuntu /opt/care-ride
+          
+          echo "📥 Cloning fresh repository..."
+          cd /opt
+          git clone https://github.com/chhabi86/care-ride.git care-ride
+          cd care-ride
+          
+          echo "🚀 Starting deployment..."
+          sudo chmod +x backend/deploy.sh
+          cd backend
+          sudo DOMAIN="$DOMAIN" ./deploy.sh
+          
+          echo "✅ Deployment completed!"
+          sudo docker ps
+          CLEANUP
