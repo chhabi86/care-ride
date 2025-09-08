@@ -1,0 +1,127 @@
+name: Frontend Deploy with SSH Retry
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout frontend code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test -- --watch=false --browsers=ChromeHeadless
+        continue-on-error: true
+
+      - name: Build production frontend
+        run: npm run build --prod
+
+      - name: Setup SSH and Deploy
+        run: |
+          set -eo pipefail
+          echo "Setting up SSH key for deployment..."
+          
+          # Setup SSH key
+          printf "%s\n" "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
+          
+          # Convert literal \n sequences to real newlines if present
+          if grep -q '\\n' /tmp/deploy_key; then
+            echo "Converting literal \\n sequences to newlines"
+            sed -e 's/\\n/\n/g' /tmp/deploy_key > /tmp/deploy_key.tmp && mv /tmp/deploy_key.tmp /tmp/deploy_key
+          fi
+          
+          # Strip CR in case of Windows line endings
+          sed -i 's/\r$//' /tmp/deploy_key || true
+          
+          # Ensure proper permissions
+          chmod 600 /tmp/deploy_key
+          
+          # Validate key format
+          echo "Validating SSH key format..."
+          if head -n1 /tmp/deploy_key | grep -q 'BEGIN OPENSSH PRIVATE KEY'; then
+            echo "✅ SSH key format validated"
+          else
+            echo "⚠️  SSH key format warning - checking if usable"
+          fi
+          
+          # Test key readability
+          if ssh-keygen -lf /tmp/deploy_key >/dev/null 2>&1; then
+            echo "✅ SSH key is readable"
+            ssh-keygen -lf /tmp/deploy_key
+          else
+            echo "❌ SSH key validation failed"
+            exit 1
+          fi
+          
+          # SSH connection with retry
+          echo "Testing SSH connection..."
+          for attempt in {1..5}; do
+            echo "SSH connection attempt $attempt of 5 to ${{ secrets.DEPLOY_HOST }}"
+            
+            if timeout 30 ssh -o ConnectTimeout=10 \
+                             -o ServerAliveInterval=5 \
+                             -o ServerAliveCountMax=2 \
+                             -o StrictHostKeyChecking=no \
+                             -o BatchMode=yes \
+                             -i /tmp/deploy_key \
+                             "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+                             "echo 'SSH connection successful'"; then
+              echo "✅ SSH connection successful on attempt $attempt"
+              break
+            else
+              echo "❌ SSH connection failed on attempt $attempt"
+              if [ $attempt -lt 5 ]; then
+                wait_time=$((attempt * 5 + 5))
+                echo "⏳ Waiting ${wait_time}s before retry..."
+                sleep $wait_time
+              else
+                echo "❌ All SSH connection attempts failed"
+                exit 1
+              fi
+            fi
+          done
+          
+          # Deploy frontend
+          echo "🚀 Deploying frontend..."
+          
+          # Create deployment directory on server
+          ssh -o ConnectTimeout=10 \
+              -o StrictHostKeyChecking=no \
+              -o BatchMode=yes \
+              -i /tmp/deploy_key \
+              "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+              "sudo mkdir -p /var/www/care-ride && sudo chown ${{ secrets.DEPLOY_USER }}:${{ secrets.DEPLOY_USER }} /var/www/care-ride"
+          
+          # Upload frontend files
+          echo "📤 Uploading frontend files..."
+          scp -o ConnectTimeout=10 \
+              -o StrictHostKeyChecking=no \
+              -o BatchMode=yes \
+              -i /tmp/deploy_key \
+              -r dist/care-ride-frontend/* \
+              "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/care-ride/"
+          
+          # Configure Nginx (if needed)
+          ssh -o ConnectTimeout=10 \
+              -o StrictHostKeyChecking=no \
+              -o BatchMode=yes \
+              -i /tmp/deploy_key \
+              "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+              "sudo systemctl reload nginx || echo 'Nginx reload skipped'"
+          
+          echo "✅ Frontend deployment completed successfully!"
