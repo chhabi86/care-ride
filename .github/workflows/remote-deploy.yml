@@ -14,10 +14,17 @@ jobs:
         shell: bash
         run: |
           set -eo pipefail
+          # Try base64 first, but fallback gracefully to regular key
           if [ -n "${{ secrets.DEPLOY_SSH_KEY_B64 }}" ]; then
-            echo "Decoding base64 SSH key"
-            echo "${{ secrets.DEPLOY_SSH_KEY_B64 }}" | base64 -d > /tmp/deploy_key || { echo "Base64 decode failed" >&2; exit 1; }
+            echo "Attempting to decode base64 SSH key"
+            if echo "${{ secrets.DEPLOY_SSH_KEY_B64 }}" | base64 -d > /tmp/deploy_key 2>/dev/null; then
+              echo "Successfully decoded base64 SSH key"
+            else
+              echo "Base64 decode failed, falling back to regular SSH key"
+              printf "%s" "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
+            fi
           else
+            echo "Using regular SSH key"
             printf "%s" "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
           fi
           # Convert literal \n sequences to real newlines if present (some users paste escaped form)
