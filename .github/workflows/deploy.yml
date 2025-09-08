@@ -1,0 +1,71 @@
+# Frontend CI/CD Workflow (for care-ride repository)
+name: Frontend Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout frontend code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test -- --watch=false --browsers=ChromeHeadless
+
+      - name: Build production frontend
+        run: npm run build --prod
+
+      - name: Deploy to server
+        run: |
+          # Setup SSH key
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          
+          # Deploy frontend static files
+          ssh -o StrictHostKeyChecking=no \
+              -i /tmp/deploy_key \
+              ubuntu@${{ secrets.DEPLOY_HOST }} \
+              "bash -s" <<'DEPLOY'
+          
+          # Create frontend directory
+          sudo mkdir -p /var/www/care-ride-frontend
+          
+          # Stop nginx temporarily
+          sudo systemctl stop nginx || true
+          
+          # Backup current frontend
+          sudo mv /var/www/care-ride-frontend /var/www/care-ride-frontend.backup.$(date +%Y%m%d-%H%M%S) || true
+          sudo mkdir -p /var/www/care-ride-frontend
+          
+          DEPLOY
+          
+          # Upload built files
+          scp -o StrictHostKeyChecking=no \
+              -i /tmp/deploy_key \
+              -r dist/care-ride-frontend/* \
+              ubuntu@${{ secrets.DEPLOY_HOST }}:/tmp/frontend-build/
+          
+          # Move files to web directory
+          ssh -o StrictHostKeyChecking=no \
+              -i /tmp/deploy_key \
+              ubuntu@${{ secrets.DEPLOY_HOST }} \
+              "sudo mv /tmp/frontend-build/* /var/www/care-ride-frontend/ && sudo systemctl start nginx"
+
+      - name: Verify deployment
+        run: |
+          sleep 10
+          curl -f http://${{ secrets.DEPLOY_HOST }} || exit 1
