@@ -68,38 +68,55 @@ chmod +x deploy-droplet.sh
 ## 🏗 Local Development
 
 ### Prerequisites
-- **Node.js 18+** and npm
-- **Java 17+** and Maven
-- **Docker & Docker Compose**
+- **Docker Desktop** - Must be running
+- **Node.js 18+** and npm (for frontend development)
 - **Git**
 
-### Frontend Setup
+### 🚀 Quick Start (Recommended)
+```bash
+# Start all services with one command
+./start-local.sh
+```
+
+This script will automatically:
+- ✅ Start PostgreSQL database (port 5432)
+- ✅ Build and start Spring Boot backend (port 8080)
+- ✅ Start Angular frontend (port 4201)
+- ✅ Open browser to http://localhost:4201
+
+### 🛑 Stop All Services
+```bash
+./stop-local.sh
+```
+
+### 📋 Service URLs
+- **Frontend:** http://localhost:4201 (Angular app)
+- **Backend API:** http://localhost:8080 (Spring Boot)
+- **Database:** localhost:5432 (PostgreSQL)
+
+### 🔧 Manual Setup (Alternative)
+
+#### Step 1: Start Database & Backend
+```bash
+# Start database and backend containers
+docker-compose -f docker-compose.local.yml up -d
+
+# Check status
+docker ps
+```
+
+#### Step 2: Start Frontend
 ```bash
 cd frontend
-npm install
-npm run build    # Production build
-npm start        # Development server (http://localhost:4200)
+npm install  # First time only
+npm start -- --port 4201
 ```
 
-### Backend Setup
-```bash
-cd backend
-./mvnw spring-boot:run    # Development server (http://localhost:8080)
-```
-
-### Full Stack Development
-```bash
-# Start database
-docker-compose up db
-
-# Start backend (terminal 1)
-cd backend && ./mvnw spring-boot:run
-
-# Start frontend (terminal 2) 
-cd frontend && npm start
-
-# Access application: http://localhost:4200
-```
+#### Step 3: Access Application
+- Frontend: http://localhost:4201
+- Backend API: http://localhost:8080
+- Database logs: `docker logs care-ride-site-db-1`
+- Backend logs: `docker logs care-ride-site-backend-1`
 
 ## 📁 Project Structure
 
