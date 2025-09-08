@@ -61,8 +61,26 @@ jobs:
             echo "ERROR: DEPLOY_DOMAIN secret is not set; add it in repository Settings -> Secrets and retry." >&2
             exit 1
           fi
-          echo "Connecting to ${{ secrets.DEPLOY_HOST }} as ${{ secrets.DEPLOY_USER }}"
-          ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=10 -o ConnectTimeout=30 -i /tmp/deploy_key -p "${{ secrets.DEPLOY_SSH_PORT }}" "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" "DOMAIN=${DEPLOY_DOMAIN} bash -s" <<'REMOTE'
+          
+          # Function to attempt SSH connection with retries
+          ssh_with_retry() {
+            local attempt=1
+            local max_attempts=5
+            local wait_time=10
+            
+            while [ $attempt -le $max_attempts ]; do
+              echo "SSH connection attempt $attempt of $max_attempts to ${{ secrets.DEPLOY_HOST }}"
+              
+              if ssh -o StrictHostKeyChecking=no \
+                     -o ServerAliveInterval=30 \
+                     -o ServerAliveCountMax=3 \
+                     -o ConnectTimeout=15 \
+                     -o ConnectionAttempts=1 \
+                     -o BatchMode=yes \
+                     -i /tmp/deploy_key \
+                     -p "${{ secrets.DEPLOY_SSH_PORT }}" \
+                     "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+                     "DOMAIN=${DEPLOY_DOMAIN} bash -s" <<'REMOTE'
             set -eo pipefail
             if [ -z "$DOMAIN" ]; then
               echo "ERROR: DOMAIN environment variable not received on remote" >&2
@@ -125,3 +143,23 @@ jobs:
               sudo DOMAIN="$DOMAIN" ./deploy.sh
             fi
           REMOTE
+              then
+                echo "✅ SSH connection successful on attempt $attempt"
+                return 0
+              else
+                echo "❌ SSH connection failed on attempt $attempt"
+                if [ $attempt -lt $max_attempts ]; then
+                  echo "⏳ Waiting ${wait_time}s before retry..."
+                  sleep $wait_time
+                  wait_time=$((wait_time + 5))  # Increase wait time for next attempt
+                fi
+                attempt=$((attempt + 1))
+              fi
+            done
+            
+            echo "❌ All SSH connection attempts failed"
+            return 1
+          }
+          
+          # Call the SSH function with retry logic
+          ssh_with_retry
