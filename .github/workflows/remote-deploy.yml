@@ -2,8 +2,9 @@ name: Remote Deploy to Ubuntu Server
 
 on:
   workflow_dispatch: {}
-  push:
-    branches: [ main ]
+  # Temporarily disabled auto-deploy until SSH secrets are configured
+  # push:
+  #   branches: [ main ]
 
 jobs:
   remote-deploy:
