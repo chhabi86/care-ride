@@ -1,0 +1,62 @@
+name: Quick Deploy (SSH Minimal)
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deployment even if SSH is unstable'
+        required: false
+        default: 'true'
+
+jobs:
+  quick-deploy:
+    name: Quick SSH Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Setup SSH and deploy
+        run: |
+          echo "🚀 Quick deployment with minimal SSH operations..."
+          
+          # Setup SSH key
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          
+          # Define the deployment commands as a single script
+          cat > /tmp/deploy_script.sh << 'DEPLOY_EOF'
+          #!/bin/bash
+          set -e
+          cd /opt/care-ride || exit 1
+          echo "Updating code..."
+          git fetch origin main && git reset --hard origin/main
+          echo "Stopping containers..."
+          docker stop $(docker ps -q) 2>/dev/null || true
+          docker rm $(docker ps -aq) 2>/dev/null || true
+          echo "Starting fresh deployment..."
+          cd backend && DOMAIN="${DOMAIN}" ./deploy.sh > /tmp/quick-deploy.log 2>&1 &
+          echo "Deploy started in background"
+          DEPLOY_EOF
+          
+          # Try to execute with very short timeouts
+          for attempt in 1 2 3; do
+            echo "Deployment attempt $attempt..."
+            if ssh -o StrictHostKeyChecking=no \
+                   -o ConnectTimeout=3 \
+                   -o ServerAliveInterval=5 \
+                   -o ServerAliveCountMax=1 \
+                   -o BatchMode=yes \
+                   -i /tmp/deploy_key \
+                   ubuntu@167.99.55.181 \
+                   "DOMAIN='${{ secrets.DEPLOY_DOMAIN }}' bash -s" < /tmp/deploy_script.sh; then
+              echo "✅ Deployment attempt $attempt succeeded"
+              break
+            else
+              echo "❌ Attempt $attempt failed"
+              if [ $attempt -eq 3 ]; then
+                echo "🚨 All deployment attempts failed"
+                echo "💡 Server likely needs restart via DigitalOcean console"
+                exit 1
+              fi
+              sleep 5
+            fi
+          done

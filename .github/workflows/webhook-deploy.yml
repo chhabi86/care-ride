@@ -1,0 +1,74 @@
+name: Webhook Deploy (Alternative)
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      - '.github/workflows/**'
+
+jobs:
+  webhook-deploy:
+    name: Webhook Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Notify server via webhook
+        run: |
+          echo "🚀 Attempting webhook deployment to server..."
+          
+          # Try webhook approach first
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.DEPLOY_WEBHOOK_TOKEN || 'none' }}" \
+            -d '{
+              "repository": "${{ github.repository }}",
+              "ref": "${{ github.ref }}",
+              "sha": "${{ github.sha }}",
+              "domain": "${{ secrets.DEPLOY_DOMAIN }}"
+            }' \
+            "http://167.99.55.181:9000/webhook/deploy" || echo "Webhook not available"
+
+      - name: Fallback - Try minimal SSH with aggressive timeouts
+        if: always()
+        run: |
+          echo "🔄 Fallback: Attempting minimal SSH deployment..."
+          
+          # Setup SSH key
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          
+          # Try a very quick SSH deployment with minimal operations
+          ssh -o StrictHostKeyChecking=no \
+              -o ConnectTimeout=5 \
+              -o ServerAliveInterval=10 \
+              -o ServerAliveCountMax=2 \
+              -o BatchMode=yes \
+              -i /tmp/deploy_key \
+              ubuntu@167.99.55.181 \
+              "cd /opt/care-ride && git pull && docker-compose down && docker-compose up -d" || {
+            echo "❌ SSH deployment failed"
+            echo "ℹ️  Server may need manual restart via DigitalOcean console"
+            echo "ℹ️  Alternative: Use DigitalOcean's recovery console to restart SSH"
+            exit 1
+          }
+
+      - name: Verify deployment
+        if: success()
+        run: |
+          echo "✅ Deployment commands sent successfully"
+          echo "🔍 Checking if services are responding..."
+          
+          # Wait a bit for services to start
+          sleep 30
+          
+          # Check if backend is responding
+          if curl -s -f -m 10 "http://167.99.55.181:8080/actuator/health" > /dev/null; then
+            echo "✅ Backend is responding"
+          else
+            echo "⚠️  Backend not yet responding (may still be starting)"
+          fi
