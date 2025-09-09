@@ -1,0 +1,166 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (file:/opt/homebrew/Cellar/maven/3.9.11/libexec/lib/guice-5.1.0-classes.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< com.care.ride:care-ride-backend >-------------------
+[INFO] Building care-ride-backend 0.0.1
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.3.2:run (default-cli) > test-compile @ care-ride-backend >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ care-ride-backend ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 3 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ care-ride-backend ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ care-ride-backend ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /Users/chhabisharma/Documents/care-ride-site/backend/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ care-ride-backend ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< spring-boot:3.3.2:run (default-cli) < test-compile @ care-ride-backend <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.3.2:run (default-cli) @ care-ride-backend ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.2)
+
+2025-09-09T15:31:36.246-04:00  INFO 29576 --- [           main] com.care.ride.CareRideApplication        : Starting CareRideApplication using Java 24.0.2 with PID 29576 (/Users/chhabisharma/Documents/care-ride-site/backend/target/classes started by chhabisharma in /Users/chhabisharma/Documents/care-ride-site/backend)
+2025-09-09T15:31:36.248-04:00  INFO 29576 --- [           main] com.care.ride.CareRideApplication        : The following 1 profile is active: "local"
+2025-09-09T15:31:36.512-04:00  INFO 29576 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-09T15:31:36.535-04:00  INFO 29576 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 19 ms. Found 3 JPA repository interfaces.
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/Users/chhabisharma/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.26/tomcat-embed-core-10.1.26.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+2025-09-09T15:31:36.761-04:00  INFO 29576 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-09T15:31:36.767-04:00  INFO 29576 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-09T15:31:36.767-04:00  INFO 29576 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.26]
+2025-09-09T15:31:36.787-04:00  INFO 29576 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-09-09T15:31:36.787-04:00  INFO 29576 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 521 ms
+2025-09-09T15:31:36.808-04:00  INFO 29576 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-09-09T15:31:36.887-04:00  INFO 29576 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:caredb user=SA
+2025-09-09T15:31:36.888-04:00  INFO 29576 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-09-09T15:31:36.893-04:00  INFO 29576 --- [           main] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:caredb'
+2025-09-09T15:31:36.947-04:00  INFO 29576 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-09T15:31:36.974-04:00  INFO 29576 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.2.Final
+2025-09-09T15:31:36.989-04:00  INFO 29576 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-09T15:31:37.100-04:00  INFO 29576 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-09T15:31:37.118-04:00  WARN 29576 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-09T15:31:37.497-04:00  INFO 29576 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    drop table if exists booking cascade 
+Hibernate: 
+    drop table if exists contacts cascade 
+Hibernate: 
+    drop table if exists service_type cascade 
+Hibernate: 
+    create table booking (
+        service_type_id integer not null,
+        id bigint generated by default as identity,
+        pickup_time timestamp(6) with time zone not null,
+        dropoff_address varchar(255) not null,
+        email varchar(255),
+        full_name varchar(255) not null,
+        notes varchar(255),
+        phone varchar(255) not null,
+        pickup_address varchar(255) not null,
+        status varchar(255) not null,
+        primary key (id)
+    )
+Hibernate: 
+    create table contacts (
+        created_at timestamp(6),
+        id bigint generated by default as identity,
+        email varchar(255),
+        message text,
+        name varchar(255),
+        phone varchar(255),
+        reason varchar(255),
+        primary key (id)
+    )
+Hibernate: 
+    create table service_type (
+        id integer generated by default as identity,
+        description varchar(255) not null,
+        name varchar(255) not null,
+        primary key (id)
+    )
+Hibernate: 
+    alter table if exists booking 
+       add constraint FKjx7gpfq3whfqo33uyhj1ckuiv 
+       foreign key (service_type_id) 
+       references service_type
+2025-09-09T15:31:37.518-04:00  INFO 29576 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-09T15:31:37.640-04:00  WARN 29576 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-09T15:31:37.752-04:00  INFO 29576 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userDetailsService
+2025-09-09T15:31:37.979-04:00  INFO 29576 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-09T15:31:37.983-04:00  INFO 29576 --- [           main] com.care.ride.CareRideApplication        : Started CareRideApplication in 1.904 seconds (process running for 2.063)
+2025-09-09T15:31:38.658-04:00  INFO 29576 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-09T15:31:38.659-04:00  INFO 29576 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-09-09T15:31:38.659-04:00  INFO 29576 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+Hibernate: 
+    insert 
+    into
+        contacts
+        (created_at, email, message, name, phone, reason, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+2025-09-09T15:31:38.774-04:00  INFO 29576 --- [nio-8080-exec-5] com.care.ride.service.EmailService       : Trying mail send using host=smtp.mail.us-east-1.awsapps.com, port=465, ssl=true, starttls=false
+2025-09-09T15:31:40.839-04:00  INFO 29576 --- [nio-8080-exec-5] com.care.ride.service.EmailService       : Email sent to info@careridesolutionspa.com (subject=New Contact Form Submission: Testing AWS WorkMail) via smtp.mail.us-east-1.awsapps.com:465
+Hibernate: 
+    insert 
+    into
+        contacts
+        (created_at, email, message, name, phone, reason, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+2025-09-09T15:34:34.391-04:00  INFO 29576 --- [nio-8080-exec-7] com.care.ride.service.EmailService       : Trying mail send using host=smtp.mail.us-east-1.awsapps.com, port=465, ssl=true, starttls=false
+2025-09-09T15:34:35.943-04:00  INFO 29576 --- [nio-8080-exec-7] com.care.ride.service.EmailService       : Email sent to info@careridesolutionspa.com (subject=New Contact Form Submission: Need Transportation) via smtp.mail.us-east-1.awsapps.com:465
+Hibernate: 
+    insert 
+    into
+        contacts
+        (created_at, email, message, name, phone, reason, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+2025-09-09T15:35:09.386-04:00  INFO 29576 --- [nio-8080-exec-9] com.care.ride.service.EmailService       : Trying mail send using host=smtp.mail.us-east-1.awsapps.com, port=465, ssl=true, starttls=false
+2025-09-09T15:35:10.871-04:00  INFO 29576 --- [nio-8080-exec-9] com.care.ride.service.EmailService       : Email sent to info@careridesolutionspa.com (subject=New Contact Form Submission: EMAIL VERIFICATION TEST) via smtp.mail.us-east-1.awsapps.com:465
+Hibernate: 
+    insert 
+    into
+        contacts
+        (created_at, email, message, name, phone, reason, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+2025-09-09T15:39:10.733-04:00  INFO 29576 --- [nio-8080-exec-1] com.care.ride.service.EmailService       : Trying mail send using host=smtp.mail.us-east-1.awsapps.com, port=465, ssl=true, starttls=false
+2025-09-09T15:39:12.287-04:00  INFO 29576 --- [nio-8080-exec-1] com.care.ride.service.EmailService       : Email sent to info@careridesolutionspa.com (subject=New Contact Form Submission: Contact Form Test) via smtp.mail.us-east-1.awsapps.com:465
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  08:29 min
+[INFO] Finished at: 2025-09-09T15:40:04-04:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.3.2:run (default-cli) on project care-ride-backend: Process terminated with exit code: 137 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
