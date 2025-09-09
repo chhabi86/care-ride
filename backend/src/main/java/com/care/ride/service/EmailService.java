@@ -31,6 +31,22 @@ public class EmailService {
      * Returns true on first successful send, false otherwise. All failures are logged.
      */
     public boolean sendContactEmail(String to, String subject, String text) {
+        log.info("=== EMAIL SEND ATTEMPT ===");
+        log.info("From: {}", configuredSender);
+        log.info("To: {}", to);
+        log.info("Subject: {}", subject);
+        log.info("Host: {}, Port: {}", configuredHost, configuredPort);
+        log.info("Password configured: {}", (configuredPassword != null && !configuredPassword.trim().isEmpty()) ? "YES" : "NO");
+        
+        if (configuredPassword == null || configuredPassword.trim().isEmpty()) {
+            log.error("❌ MAIL_PASSWORD is not configured! Email cannot be sent.");
+            log.error("💡 To fix this:");
+            log.error("   1. For Gmail: Enable 2FA, then generate App Password at https://support.google.com/accounts/answer/185833");
+            log.error("   2. Set environment variables: MAIL_USERNAME=your-email@gmail.com MAIL_PASSWORD=your-app-password");
+            log.error("   3. Restart the application");
+            return false;
+        }
+
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(configuredSender);
         message.setTo(to);

@@ -3,5 +3,7 @@
     { "path": "/Users/chhabisharma/Documents/care-ride-site/frontend" },
     { "path": "/Users/chhabisharma/Documents/care-ride-site/backend" }
   ],
-  "settings": {}
+  "settings": {
+    "java.compile.nullAnalysis.mode": "automatic"
+  }
 }
