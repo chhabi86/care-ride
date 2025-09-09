@@ -24,18 +24,22 @@ SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/caredb
 SPRING_DATASOURCE_USERNAME=careuser
 SPRING_DATASOURCE_PASSWORD=changeme_db_password
 
-# JWT Configuration
-JWT_SECRET=care_ride_jwt_secret_production_2024
+# Piecewise alternative (used by application.yml fallbacks):
+DB_HOST=db
+DB_PORT=5432
+DB_NAME=caredb
+DB_USER=careuser
+DB_PASS=changeme_db_password
 
-# AWS WorkMail Configuration
+# JWT Configuration
+JWT_SECRET=CHANGE_ME_TO_RANDOM_STRING
+
+# AWS WorkMail SMTP Configuration
 MAIL_HOST=smtp.mail.us-east-1.awsapps.com
 MAIL_PORT=465
 MAIL_USERNAME=info@careridesolutionspa.com
 MAIL_PASSWORD=Transportation1@@
-MAIL_DEBUG=true
-
-# Profile
-SPRING_PROFILES_ACTIVE=prod
+MAIL_DEBUG=false
 EOF
 
 # Set secure permissions
