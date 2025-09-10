@@ -78,9 +78,14 @@ fi
   docker compose -f docker-compose.yml $PGADMIN_COMPOSE_ARGS up -d db backend
 
 echo "Deploying external Angular frontend (static assets)"
+# Repo containing both backend/ and frontend/ directories
 FRONTEND_REPO_URL=${FRONTEND_REPO_URL:-https://github.com/chhabi86/care-ride.git}
+# Root clone directory for the repo
 FRONTEND_DIR=/opt/care-ride-frontend-src
-TARGET_STATIC_DIR=/var/www/care-ride-frontend
+# Path within the repo where Angular project lives (contains angular.json)
+FRONTEND_APP_DIR=${FRONTEND_APP_DIR:-$FRONTEND_DIR/frontend}
+# Target directory served by nginx
+TARGET_STATIC_DIR=${TARGET_STATIC_DIR:-/var/www/care-ride-frontend}
 
 if [ ! -d "$FRONTEND_DIR/.git" ]; then
   echo "Cloning frontend repo $FRONTEND_REPO_URL"
@@ -97,7 +102,7 @@ if ! command -v node >/dev/null 2>&1; then
 fi
 
 echo "Installing frontend dependencies..."
-cd "$FRONTEND_DIR"
+cd "$FRONTEND_APP_DIR"
 if [ -f package-lock.json ]; then
   npm ci --legacy-peer-deps || npm install
 else
@@ -110,13 +115,20 @@ if ! npx ng build --configuration production; then
   npx ng build || true
 fi
 
-DIST_DIR=$(find dist -maxdepth 3 -type f -name index.html -printf '%h\n' 2>/dev/null | head -n1 || true)
+## Angular 17 typically outputs to dist/<project-name>/browser
+# Detect the dist directory by searching for the built index.html
+DIST_DIR=$(find dist -type f -name index.html -printf '%h\n' 2>/dev/null | head -n1 || true)
 if [ -z "$DIST_DIR" ]; then
-  DIST_DIR=$(find dist -mindepth 1 -maxdepth 2 -type d | head -n1 || true)
+  # Fallback: first subdir under dist
+  DIST_DIR=$(find dist -mindepth 1 -maxdepth 3 -type d -name browser -o -mindepth 1 -maxdepth 2 -type d | head -n1 || true)
 fi
 if [ -n "$DIST_DIR" ]; then
   mkdir -p "$TARGET_STATIC_DIR"
   rsync -a --delete "$DIST_DIR/" "$TARGET_STATIC_DIR/"
+  # Ensure nginx can read the files
+  chown -R www-data:www-data "$TARGET_STATIC_DIR" || true
+  find "$TARGET_STATIC_DIR" -type d -exec chmod 755 {} \; || true
+  find "$TARGET_STATIC_DIR" -type f -exec chmod 644 {} \; || true
   echo "Synced frontend dist from $DIST_DIR to $TARGET_STATIC_DIR"
 else
   echo "WARNING: Could not locate built Angular dist directory. Frontend not updated." >&2
