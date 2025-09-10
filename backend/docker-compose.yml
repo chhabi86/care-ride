@@ -27,7 +27,15 @@ services:
     networks:
       - care-net
 
-  # Frontend now deployed as static assets (see deploy.sh)
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.prod
+    restart: unless-stopped
+    ports:
+      - '3000:80'
+    networks:
+      - care-net
 
 
 volumes:

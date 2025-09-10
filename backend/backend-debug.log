@@ -152,3 +152,16 @@ Hibernate:
         (?, ?, ?, ?, ?, ?, default)
 2025-09-09T15:47:50.103-04:00  INFO 32983 --- [nio-8080-exec-1] com.care.ride.service.EmailService       : Trying mail send using host=smtp.mail.us-east-1.awsapps.com, port=465, ssl=true, starttls=false
 2025-09-09T15:47:51.323-04:00  INFO 32983 --- [nio-8080-exec-1] com.care.ride.service.EmailService       : Email sent to info@careridesolutionspa.com (subject=New Contact Form Submission: Need Ride1) via smtp.mail.us-east-1.awsapps.com:465
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  01:12 h
+[INFO] Finished at: 2025-09-09T16:53:07-04:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.3.2:run (default-cli) on project care-ride-backend: Process terminated with exit code: 137 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

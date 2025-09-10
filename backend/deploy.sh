@@ -53,87 +53,30 @@ docker rm $(docker ps -aq) 2>/dev/null || true
 docker compose -f docker-compose.yml down --remove-orphans 2>/dev/null || true
 docker-compose down 2>/dev/null || true
 
-echo "Building backend image (docker-compose.yml)..."
-docker compose -f docker-compose.yml build backend
-echo "(Skipping containerized frontend – using static build from external repo)"
+echo "Building images (backend + frontend)..."
+docker compose -f docker-compose.yml build
 
 PGADMIN_COMPOSE_ARGS=""
-PGADMIN_PORT=${PGADMIN_PORT:-5050}
+PGLADMIN_PORT=${PGADMIN_PORT:-5050}
 if [ "${PROFILE_PGADMIN:-0}" = "1" ]; then
   if ss -ltn | awk '{print $4}' | grep -q ":$PGADMIN_PORT$"; then
     echo "Requested pgadmin but port $PGADMIN_PORT is busy; skipping pgadmin."
   else
     if [ -f docker-compose.pgadmin.yml ]; then
-      PGADMIN_COMPOSE_ARGS="-f docker-compose.pgadmin.yml"
-      echo "Including pgadmin via docker-compose.pgadmin.yml"
+      PGADMIN_COMPOSE_ARGS="-f docker-compose.pgladmin.yml"
+      echo "Including pgadmin via docker-compose.pgladmin.yml"
     else
-      echo "docker-compose.pgadmin.yml missing; cannot enable pgadmin." >&2
+      echo "docker-compose.pgladmin.yml missing; cannot enable pgladmin." >&2
     fi
   fi
 else
-  echo "PgAdmin not requested (set PROFILE_PGADMIN=1 to include)."
+  echo "PgAdmin not requested (set PROFILE_PGLADMIN=1 to include)."
 fi
 
-  echo "Starting containers (db + backend only)..."
-  docker compose -f docker-compose.yml $PGADMIN_COMPOSE_ARGS up -d db backend
+  echo "Starting containers (db + backend + frontend)..."
+  docker compose -f docker-compose.yml $PGLADMIN_COMPOSE_ARGS up -d
 
-echo "Deploying external Angular frontend (static assets)"
-# Repo containing both backend/ and frontend/ directories
-FRONTEND_REPO_URL=${FRONTEND_REPO_URL:-https://github.com/chhabi86/care-ride.git}
-# Root clone directory for the repo
-FRONTEND_DIR=/opt/care-ride-frontend-src
-# Path within the repo where Angular project lives (contains angular.json)
-FRONTEND_APP_DIR=${FRONTEND_APP_DIR:-$FRONTEND_DIR/frontend}
-# Target directory served by nginx
-TARGET_STATIC_DIR=${TARGET_STATIC_DIR:-/var/www/care-ride-frontend}
-
-if [ ! -d "$FRONTEND_DIR/.git" ]; then
-  echo "Cloning frontend repo $FRONTEND_REPO_URL"
-  rm -rf "$FRONTEND_DIR" || true
-  git clone --depth=1 "$FRONTEND_REPO_URL" "$FRONTEND_DIR"
-else
-  echo "Updating existing frontend repo..."
-  (cd "$FRONTEND_DIR" && git fetch --depth=1 origin main || true && git reset --hard origin/main || true)
-fi
-
-if ! command -v node >/dev/null 2>&1; then
-  echo "Installing Node.js (apt)"
-  apt install -y nodejs npm || true
-fi
-
-echo "Installing frontend dependencies..."
-cd "$FRONTEND_APP_DIR"
-if [ -f package-lock.json ]; then
-  npm ci --legacy-peer-deps || npm install
-else
-  npm install
-fi
-
-echo "Building Angular production bundle..."
-if ! npx ng build --configuration production; then
-  echo "Production build failed, trying default build." >&2
-  npx ng build || true
-fi
-
-## Angular 17 typically outputs to dist/<project-name>/browser
-# Detect the dist directory by searching for the built index.html
-DIST_DIR=$(find dist -type f -name index.html -printf '%h\n' 2>/dev/null | head -n1 || true)
-if [ -z "$DIST_DIR" ]; then
-  # Fallback: first subdir under dist
-  DIST_DIR=$(find dist -mindepth 1 -maxdepth 3 -type d -name browser -o -mindepth 1 -maxdepth 2 -type d | head -n1 || true)
-fi
-if [ -n "$DIST_DIR" ]; then
-  mkdir -p "$TARGET_STATIC_DIR"
-  rsync -a --delete "$DIST_DIR/" "$TARGET_STATIC_DIR/"
-  # Ensure nginx can read the files
-  chown -R www-data:www-data "$TARGET_STATIC_DIR" || true
-  find "$TARGET_STATIC_DIR" -type d -exec chmod 755 {} \; || true
-  find "$TARGET_STATIC_DIR" -type f -exec chmod 644 {} \; || true
-  echo "Synced frontend dist from $DIST_DIR to $TARGET_STATIC_DIR"
-else
-  echo "WARNING: Could not locate built Angular dist directory. Frontend not updated." >&2
-fi
-cd "$ROOT"
+echo "Frontend will be deployed as Docker container (see docker-compose.yml frontend service)"
 
 echo "Configuring nginx for $DOMAIN (static frontend + /api proxy)"
 NGINX_CONF="/etc/nginx/sites-available/care-ride"
