@@ -1,0 +1,40 @@
+# Maven build directory
+target/
+
+# Log files
+*.log
+
+# Environment files with sensitive data
+.env
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Build artifacts
+*.jar
+*.war
+*.class
+
+# Spring Boot
+spring.log
+
+# Docker
+.dockerignore
+
+# Backup files
+*.bak
+*.backup
