@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { AppComponent } from './app.component';\nimport { ContactComponent } from './contact.component';\nexport const routes = [{\n  path: '',\n  component: AppComponent\n}, {\n  path: 'contact',\n  component: ContactComponent\n}];","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

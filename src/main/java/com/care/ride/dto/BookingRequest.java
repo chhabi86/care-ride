@@ -1,1 +1,0 @@
-package com.care.ride.dto;import jakarta.validation.constraints.*;public record BookingRequest(@NotBlank String fullName,@NotBlank String phone,String email,@NotBlank String pickupAddress,@NotBlank String dropoffAddress,@NotNull java.time.Instant pickupTime,@NotNull Integer serviceTypeId,String notes){}

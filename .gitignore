@@ -16,3 +16,4 @@ frontend-dist.tar.gz
 # Environment files (keep examples, not actual .env files)
 *.env
 !*.env.example
+node_modules/
